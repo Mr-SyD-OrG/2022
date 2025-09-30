@@ -42,6 +42,7 @@ class Database:
         self.users = self.db.uersz
         self.req = self.db.requests
         self.syd = self.db.bots
+        self.all = self.db.filed
         self.words = self.db.words
         
     async def find_join_req(self, id):
