@@ -27,7 +27,7 @@ SYD = ["😶‍🌫️", "🥶", "🍀", "🌴", "🍀", "🕸", "❄️", "⛈�
 
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
-    return
+    
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         buttons = [[
                     InlineKeyboardButton('📓 Gᴜɪᴅᴇ 📓', url=f"https://t.me/{temp.U_NAME}?start=help")
