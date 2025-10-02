@@ -221,8 +221,8 @@ async def is_rq_subscribed(bot, query, group_id):
 # Step 1: When /setforce is used
 @Client.on_message(filters.command("setforce"))
 async def set_force_channel(client, message):
-    if message.chat.type != enums.ChatType.SUPERGROUP:
-        return await message.reply("⚠️ ᴘʟᴇᴀꜱᴇ ᴜꜱᴇ ᴛʜɪꜱ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ...")
+    if message.chat.type not in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
+        return await message.reply("⚠️ ᴘʟᴇᴀꜱᴇ ᴜꜱᴇ ᴛʜɪꜱ ɪɴ ʏᴏᴜʀ ɢʀᴏᴜᴘ.")
 
     member = await client.get_chat_member(message.chat.id, message.from_user.id)
     if member.status not in [enums.ChatMemberStatus.ADMINISTRATOR, enums.ChatMemberStatus.OWNER]:
@@ -277,7 +277,7 @@ async def handle_forwarded(client, message):
         return await message.reply(f"ᴄᴀɴ'ᴛ ᴄʀᴇᴀᴛᴇ ɪɴᴠɪᴛᴇ: {e}")
 
     await force_db.set_group_channel(group_id, channel.id, message.from_user.id)
-    await message.reply(f"✅ ꜱᴇᴛ ꜰᴏʀᴄᴇ ꜱᴜʙ ᴄʜᴀɴɴᴇʟ: `{channel.id}`")
+    syd =await message.reply(f"✅ ꜱᴇᴛ ꜰᴏʀᴄᴇ ꜱᴜʙ ᴄʜᴀɴɴᴇʟ: `{channel.id}`")
     del temp.FORCE_WAIT[group_id]
     await message.delete()
     total=await client.get_chat_members_count(message.chat.id)
@@ -290,6 +290,8 @@ async def handle_forwarded(client, message):
             ]
         )
     )
+    await asyncio.sleep(600)
+    await syd.delete()
 
 @Client.on_chat_join_request(filters.chat(AUTH_CHANNEL))
 async def join_reqs(client, message: ChatJoinRequest):
