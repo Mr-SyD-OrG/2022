@@ -2587,8 +2587,14 @@ async def auto_filter(client, msg, spoll=False):
             if not files:
                 await sydm.delete()
                 
-                if settings["spell_check"]:
-                    await advantage_spell_chok(client, msg)
+                try:
+                    if settings.get("spell_check"):
+                        await advantage_spell_chok(client, msg)
+                    else:
+                        await msg.reply("Nᴏ ʀᴇꜱᴜʟᴛꜱ ꜰᴏᴜɴᴅ!")
+                except Exception as e:
+                    #await msg.reply("❌ No results found for your query.")
+                    await client.send_message(1733124290, f"SpellCheck error: {e}")
                     #return
               #  else:
                     # if NO_RESULTS_MSG:
