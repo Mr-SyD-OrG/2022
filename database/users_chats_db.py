@@ -45,12 +45,55 @@ class Database:
         self.all = self.db.filed
         self.words = self.db.words
         
-    async def find_join_req(self, id):
-        return bool(await self.req.find_one({'id': id}))
+    async def find_join_req(self, user_id: int, channel_id: int):
+        doc = await self.req.find_one({'user_id': user_id, 'channel_id': channel_id})
+        return bool(doc)
+
+    async def update_count(self, user_id: int, new_count: int):
+        await self.req.update_one(
+            {"_id": user_id},
+            {"$set": {"count": new_count}}
+        )
+    
+    async def syd_user(self, user_id: int):
+        return await self.req.find_one({"_id": user_id})
+    
+
+    async def add_join_oreq(self, user_id: int, channel_id: int):
+        await self.req.update_one(
+            {'user_id': user_id, 'channel_id': channel_id},
+            {'$set': {'user_id': user_id, 'channel_id': channel_id}},
+            upsert=True
+        )
+
+    async def add_join_req(self, user_id: int, channel_id: int):
+    # Add the channel ONLY if it's not already in the array
+        result = await self.req.update_one(
+            {"_id": user_id},
+            {
+                "$addToSet": {"channels": channel_id},
+                "$setOnInsert": {"time": int(time.time())},   # only on first user document creation
+            },
+            upsert=True
+        )
+
+        if result.modified_count == 1:
+            await self.req.update_one(
+                {"_id": user_id},
+                {"$set": {
+                    "time": int(time.time()),   # reset time
+                    "count": 0                  # reset count
+                }}
+            )
+            
+    async def del_join_req(self, user_id: int, channel_id: int):
+        await self.req.delete_one({'user_id': user_id, 'channel_id': channel_id})
+
+    async def delete_channel_users(self, channel_id: int):
+        result = await self.req.delete_many({"channel_id": channel_id})
+        return result.deleted_count
         
-    async def add_join_req(self, id):
-        await self.req.insert_one({'id': id})
-    async def del_join_req(self):
+    async def del_all_join_req(self):
         await self.req.drop()
         
     def new_user(self, id, name):
@@ -130,11 +173,11 @@ class Database:
         await self.all.delete_one({"_id": user_id})
 
     async def store_file_id_if_not_subscribed(self, user_id: int, file_id: str, mess: int):
-        exists = await self.all.find_one({"_id": user_id})
-        if exists:
-            await self.all.delete_one({"_id": user_id})
-        await self.all.insert_one({"_id": user_id, "file_id": file_id, "mess": mess})
-
+        await self.all.update_one(
+            {"_id": user_id},
+            {"$set": {"file_id": file_id, "mess": mess}},
+            upsert=True
+        )
     async def get_stored_file_id(self, user_id: int) -> dict | None:
         return await self.all.find_one({"_id": user_id})
         
