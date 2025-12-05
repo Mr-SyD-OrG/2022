@@ -16,6 +16,9 @@ SESSION = environ.get('SESSION', 'Media_search')
 API_ID = int(environ.get('API_ID', ''))
 API_HASH = environ.get('API_HASH', '')
 BOT_TOKEN = environ.get('BOT_TOKEN', "")
+FSUB_UNAME = "Mod_Moviez_X"
+COUNT_LIMIT = 12
+DAYS_LIMIT = 4  
 
 # Bot settings
 CACHE_TIME = int(environ.get('CACHE_TIME', 300))
@@ -54,7 +57,7 @@ PREMIUM_USER = [int(user) if id_pattern.search(user) else user for user in envir
 auth_channel = environ.get('AUTH_CHANNEL', '') #Channel / Group Id for force sub ( make sure bot is admin )
 auth_grp = environ.get('AUTH_GROUP')
 SYD_CHANNEL = int(syd_channel) if syd_channel and id_pattern.search(syd_channel) else None
-AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
+AUTH_CHANNEL = [-1003442170595, -1003325238947, -1003387228939, -1003496202907, -1003469127200, -1003473523156, -1003469783090, -1003469783090] #int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
 AUTH_GROUPS = [int(ch) for ch in auth_grp.split()] if auth_grp else None
 support_chat_id = environ.get('SUPPORT_CHAT_ID', '') # support group id ( make sure bot is admin )
 reqst_channel = environ.get('REQST_CHANNEL_ID', '') # request channel id ( make sure bot is admin )
